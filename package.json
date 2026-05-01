@@ -1,0 +1,22 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+     "test": "echo \"Error: no test specified\" && exit 1",
+     "dev": "npx @11ty/eleventy --serve",
+     "build": "npx @11ty/eleventy",
+     "new-article": "node scripts/scaffold-article.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@11ty/eleventy": "^3.1.5",
+    "luxon": "^3.0.0"
+  },
+  "devDependencies": {
+    "open-cli": "^9.0.0"
+  }
+}

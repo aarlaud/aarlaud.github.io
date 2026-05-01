@@ -1,0 +1,23 @@
+---
+layout: _layouts/base.njk
+title: Antoine's Blog
+---
+
+<p class="subtitle">Physics is the law; everything else is a recommendation</p>
+
+{% set posts = collections.article | reverse %}
+{% for post in posts %}
+    <article class="article-card">
+        <a href="{{ post.url | url }}" aria-label="Read more about {{ post.data.title }}"></a>
+        <div class="article-date">{{ post.date | date('LLLL dd, yyyy') }}</div>
+        <div class="article-title">{{ post.data.title }}</div>
+        <p class="summary">{{ post.data.summary }}</p>
+        {% if post.data.tags and post.data.tags.length > 0 %}
+            <div class="article-tags">
+                {% for tag in post.data.tags %}
+                    <span class="tag">{{ tag }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </article>
+{% endfor %}

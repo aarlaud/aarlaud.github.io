@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ summary if summary else "A personal blog about physics and technology." }}">
+    <title>{{ title if title else "Antoine's Blog" }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #e2e8f0;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #0f172a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            padding: 2rem 1rem;
+        }
+        .stars {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none; z-index: -1; overflow: hidden;
+        }
+        .star {
+            position: absolute; width: 2px; height: 2px;
+            background: rgba(255, 255, 255, 0.6); border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+        @keyframes twinkle { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
+
+        .orbit {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            transform-style: preserve-3d; z-index: -2;
+            pointer-events: none; overflow: hidden;
+        }
+        .orbit-1 { border: 2px solid rgba(167, 139, 250, 0.35); border-radius: 50%; top: -350px; left: -250px; width: 1300px; height: 1300px; transform: rotateY(0deg) rotateX(10deg); animation: orbit-rotate 40s linear infinite; }
+        .orbit-2 { border: 2px solid rgba(236, 72, 153, 0.25); border-radius: 50%; top: 20%; right: 10%; width: 1600px; height: 1600px; transform: rotateY(120deg) rotateX(-20deg); animation: orbit-rotate 60s linear infinite; opacity: 0.9; }
+        .orbit-3 { border: 2px solid rgba(94, 234, 212, 0.2); border-radius: 50%; bottom: 10%; left: -400px; width: 1800px; height: 1800px; transform: rotateY(-110deg) rotateX(30deg); animation: orbit-rotate 80s linear infinite; opacity: 0.8; }
+        .orbit-4 { border: 2px solid rgba(248, 113, 113, 0.18); border-radius: 50%; bottom: 30%; right: -300px; width: 1500px; height: 1500px; transform: rotateY(200deg) rotateX(-15deg); animation: orbit-rotate 70s linear infinite; opacity: 0.85; }
+        .orbit-5 { border: 2px solid rgba(255, 184, 121, 0.15); border-radius: 50%; bottom: -200px; left: 30%; width: 1400px; height: 1400px; transform: rotateY(-200deg) rotateX(5deg); animation: orbit-rotate 90s linear infinite; opacity: 0.75; }
+        @keyframes orbit-rotate {
+            from { transform: rotateY(0deg) rotateX(var(--rx, 0deg)) rotateZ(var(--rz, 0deg)); }
+            to   { transform: rotateY(360deg) rotateX(calc(var(--rx, 0deg) + 360deg)) rotateZ(calc(var(--rz, 0deg) + 360deg)); }
+        }
+
+        .page-content {
+            max-width: 700px; width: 100%;
+            position: relative; z-index: 1;
+            flex: 1; display: flex; flex-direction: column;
+        }
+
+        header {
+            text-align: center; margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        h1 {
+            font-size: 2.5rem; font-weight: 700;
+            background: linear-gradient(135deg, #818cf8, #c084fc, #22d3ee);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        a { color: inherit; text-decoration: none; }
+
+          .subtitle {
+             text-align: center; margin-top: 0.5rem; margin-bottom: 3rem;
+             color: #64748b; font-size: 0.95rem;
+          }
+
+        footer {
+            text-align: center; padding: 2rem;
+            color: #475569; font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Article Cards (Home) */
+        .article-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.95), rgba(30, 41, 59, 0.85));
+            backdrop-filter: blur(8px);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+            display: flex; flex-direction: column;
+            min-height: 220px;
+            position: relative; overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+        }
+        .article-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.5), 0 0 25px rgba(99, 102, 241, 0.2);
+            border-color: rgba(99, 102, 241, 0.35);
+        }
+        .article-card::after {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.8), transparent);
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .article-card:hover::after { opacity: 1; }
+        .article-card > a {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+        }
+
+        .article-date {
+            font-size: 0.9rem; color: #94a3b8; font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+        .article-title {
+            font-size: 1.25rem; font-weight: 600;
+            color: #f1f5f9; margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+        .summary {
+            flex: 1; color: #94a3b8; line-height: 1.6; font-size: 1rem;
+        }
+
+        /* Article Tags */
+        .article-tags {
+            margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem;
+        }
+        .tag {
+            background: rgba(99, 102, 241, 0.15);
+            color: #818cf8;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Full Article View */
+        .article-content p {
+            color: #cbd5e1; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1.25rem;
+        }
+        .article-content p:last-child { margin-bottom: 0; }
+        .article-content h1, .article-content h2, .article-content h3, .article-content h4 {
+            color: #f1f5f9; font-weight: 600; margin-top: 2rem; margin-bottom: 0.75rem;
+        }
+        .article-content h1 { font-size: 2rem; }
+        .article-content h2 { font-size: 1.75rem; }
+        .article-content h3 { font-size: 1.5rem; }
+        .article-content ul, .article-content ol {
+            color: #cbd5e1; line-height: 1.8; font-size: 1.05rem;
+            margin-bottom: 1.25rem; padding-left: 1.5rem;
+        }
+        .article-content li { margin-bottom: 0.5rem; }
+        .article-content ul { list-style-type: disc; }
+        .article-content ol { list-style-type: decimal; }
+
+        .back-link {
+            display: inline-block; margin-top: 2rem;
+            color: #94a3b8; font-size: 0.95rem;
+        }
+        .back-link:hover { color: #cbd5e1; }
+    </style>
+</head>
+<body>
+    <div class="stars">
+        <div class="star" style="top: 15%; left: 20%; animation-delay: 0s;"></div>
+        <div class="star" style="top: 30%; left: 80%; animation-delay: 0.5s;"></div>
+        <div class="star" style="top: 10%; left: 60%; animation-delay: 1.5s;"></div>
+        <div class="star" style="top: 50%; left: 90%; animation-delay: 0.2s;"></div>
+        <div class="star" style="top: 70%; left: 30%; animation-delay: 2s;"></div>
+        <div class="star" style="top: 40%; left: 15%; animation-delay: 1s;"></div>
+        <div class="star" style="top: 85%; left: 50%; animation-delay: 2.5s;"></div>
+        <div class="star" style="top: 25%; left: 45%; animation-delay: 0.8s;"></div>
+        <div class="star" style="top: 60%; left: 75%; animation-delay: 1.8s;"></div>
+        <div class="star" style="top: 90%; left: 10%; animation-delay: 0.3s;"></div>
+    </div>
+    <div class="orbit orbit-1"></div>
+    <div class="orbit orbit-2"></div>
+    <div class="orbit orbit-3"></div>
+    <div class="orbit orbit-4"></div>
+    <div class="orbit orbit-5"></div>
+
+    <div class="page-content">
+        <header>
+            <h1><a href="{{ '/' | url }}">Antoine's Blog</a></h1>
+        </header>
+
+        <main>
+            {{ content | safe }}
+        </main>
+
+        <footer>
+               <p>Built locally &copy; 2026</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,22 @@
+---
+layout: _layouts/base.njk
+---
+
+<article>
+    <h2 class="article-title">{{ title }}</h2>
+    <div class="article-date">{{ date | date('LLLL dd, yyyy') }}</div>
+
+    <div class="article-content">
+        {{ content | safe }}
+    </div>
+
+    <div class="article-tags">
+        {% for tag in tags %}
+            <span class="tag">{{ tag }}</span>
+        {% endfor %}
+    </div>
+
+    <div class="back-link-container">
+        <a href="{{ '/' | url }}" class="back-link">&larr; Back to articles</a>
+    </div>
+</article>
