@@ -29,7 +29,8 @@ Personal static blog built with **Eleventy (v3.1.5)** and hosted on GitHub Pages
 
 ## Tech Stack
 - **Build Tool**: Eleventy v3.1.5 (static site generator)
-- **Date Formatting**: luxon v3+ (via `date` filter in `eleventy.config.cjs`)
+- **Date Formatting**: luxon v3+ (via `date` and `readingTime` filters in `eleventy.config.cjs`)
+- **Article typography**: Source Serif 4 for prose; auto-generated TOC, read time, callout styling
 - **Dev Server**: `npm run dev` starts Eleventy live reload
 - **Build Command**: `npm run build` (or `npx @11ty/eleventy`)
 - **Additional**: open-cli for auto-open in browser
