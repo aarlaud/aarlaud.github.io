@@ -2,14 +2,16 @@
 
 ## Project Overview
 Personal static blog built with **Eleventy (v3.1.5)** and hosted on GitHub Pages.
-- `index.njk` serves as the homepage template
+- `index.njk` serves as the homepage: hero splash + 3 latest posts; `articles.njk` lists all posts (`/articles/`); `bio.njk` is the Bio page (`/bio/`)
 - Uses CSS-based orbital animation effects with twinkling stars background
 - Articles written in Markdown under `articles/`
 
 ## Project Structure
 ```
 .
-├── index.njk               # Homepage template (lists all articles)
+├── index.njk               # Homepage (splash hero + 3 latest posts; `bodyClass: home`)
+├── articles.njk            # All articles listing (/articles/)
+├── bio.njk                 # Bio page (/bio/)
 ├── eleventy.config.cjs     # Eleventy config: collections, filters, passthrough
 ├── package.json            # Eleventy SSG with open-cli and luxon
 ├── articles/               # Article source files (.md)
@@ -37,6 +39,7 @@ Personal static blog built with **Eleventy (v3.1.5)** and hosted on GitHub Pages
 - Fixed orbital rings background animation
 - Twinkling stars overlay effect
 - Styled article cards with hover effects
+- Sticky full-width header with site nav (Home, Bio)
 - Responsive design with system font stack
 
 ## Development Workflow
@@ -94,7 +97,9 @@ Personal static blog built with **Eleventy (v3.1.5)** and hosted on GitHub Pages
 - Article templates reference: `{{ title }}`, `{{ date }}`, `{{ summary }}`, `{{ content }}`, `{{ tags }}`
 
 ## Important Files
-- `index.njk` - Homepage template listing all articles
+- `index.njk` - Homepage (3 latest articles + link to full list)
+- `articles.njk` - Full article listing (not in `article` collection)
+- `bio.njk` - Bio page (not in `article` collection)
 - `eleventy.config.cjs` - Eleventy config: article collection, date filter, asset passthrough
 - `_includes/_layouts/base.njk` - Base HTML shell shared by all pages
 - `_includes/_layouts/article.njk` - Article page layout

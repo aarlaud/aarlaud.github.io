@@ -1,23 +1,78 @@
 ---
 layout: _layouts/base.njk
 title: Antoine's Blog
+bodyClass: home
 ---
 
-<p class="subtitle">Physics is the law; everything else is a recommendation</p>
+<section class="home-splash" aria-label="Introduction">
+    <div class="splash-grid">
+        <div class="splash-visual">
+            <a href="{{ '/bio/' | url }}" class="splash-photo-link" aria-label="Read bio">
+                <img src="{{ '/assets/images/antoine.jpg' | url }}" alt="Antoine" width="400" height="400" class="splash-photo">
+            </a>
+        </div>
 
-{% set posts = collections.article | reverse %}
-{% for post in posts %}
-    <article class="article-card">
-        <a href="{{ post.url | url }}" aria-label="Read more about {{ post.data.title }}"></a>
-        <div class="article-date">{{ post.date | date('LLLL dd, yyyy') }}</div>
-        <div class="article-title">{{ post.data.title }}</div>
-        <p class="summary">{{ post.data.summary }}</p>
-        {% if post.data.tags and post.data.tags.length > 0 %}
-            <div class="article-tags">
-                {% for tag in post.data.tags %}
-                    <span class="tag">{{ tag }}</span>
-                {% endfor %}
+        <div class="splash-copy">
+            <h1 class="splash-name">
+                Antoine,<br>
+                <em class="splash-tagline">physics &amp; technology.</em>
+            </h1>
+
+            <div class="splash-lead">
+                <p>
+                    I write here about <strong>physics</strong>, <strong>technology</strong>, and the ideas that sit at the intersection of both.
+                </p>
+                <p>
+                    Long-form notes, half-formed questions, and the occasional deep dive when something won't leave me alone.
+                </p>
+                <p class="splash-aside">
+                    <em>Mindful humanist geek.</em>
+                </p>
             </div>
+
+            <ul class="splash-stats" aria-label="Topics">
+                <li><span>Physics</span></li>
+                <li><span>Technology</span></li>
+                <li><span>Long-form</span></li>
+                <li><span>Open questions</span></li>
+            </ul>
+
+            <p class="splash-cta">
+                <a href="{{ '/bio/' | url }}">Read bio &rarr;</a>
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="home-posts" aria-label="Posts">
+    {% set posts = collections.article %}
+    <div class="home-posts-layout{% if posts.length <= 3 %} home-posts-layout--solo{% endif %}">
+        <div class="posts-grid">
+            {% for post in posts %}
+                {% if loop.index <= 3 %}
+                <article class="post-card">
+                    <a href="{{ post.url | url }}" class="post-card-link">
+                        <div class="post-card-meta">
+                            <time class="post-card-date" datetime="{{ post.date | date('yyyy-MM-dd') }}">
+                                {{ post.date | date('dd·LLL·yy') | upper }}
+                            </time>
+                            {% if post.data.tags and post.data.tags.length > 0 %}
+                                <span class="post-card-cat">{{ post.data.tags[0] | upper }}</span>
+                            {% endif %}
+                        </div>
+                        <h3 class="post-card-title">{{ post.data.title }}</h3>
+                        <p class="post-card-excerpt">{{ post.data.summary }}</p>
+                        <span class="post-card-more">Read more &rarr;</span>
+                    </a>
+                </article>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {% if posts.length > 3 %}
+            <p class="posts-more">
+                <a href="{{ '/articles/' | url }}">More articles&hellip;</a>
+            </p>
         {% endif %}
-    </article>
-{% endfor %}
+    </div>
+</section>
