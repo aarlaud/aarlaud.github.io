@@ -1,0 +1,34 @@
+---
+layout: _layouts/base.njk
+title: Articles
+permalink: /articles/
+summary: All articles on physics, technology, and more.
+---
+
+<section class="articles-page">
+    <h2 class="page-title">All articles</h2>
+
+    <div class="posts-grid">
+        {% for post in collections.article %}
+            <article class="post-card">
+                <a href="{{ post.url | url }}" class="post-card-link">
+                    <div class="post-card-meta">
+                        <time class="post-card-date" datetime="{{ post.date | date('yyyy-MM-dd') }}">
+                            {{ post.date | date('dd·LLL·yy') | upper }}
+                        </time>
+                        {% if post.data.tags and post.data.tags.length > 0 %}
+                            <span class="post-card-cat">{{ post.data.tags[0] | upper }}</span>
+                        {% endif %}
+                    </div>
+                    <h3 class="post-card-title">{{ post.data.title }}</h3>
+                    <p class="post-card-excerpt">{{ post.data.summary }}</p>
+                    <span class="post-card-more">Read more &rarr;</span>
+                </a>
+            </article>
+        {% endfor %}
+    </div>
+
+    <div class="back-link-container">
+        <a href="{{ '/' | url }}" class="back-link">&larr; Back home</a>
+    </div>
+</section>

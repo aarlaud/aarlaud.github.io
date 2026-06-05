@@ -2,49 +2,74 @@
 
 ## Project Overview
 Personal static blog built with **Eleventy (v3.1.5)** and hosted on GitHub Pages.
-- `index.njk` serves as the homepage template
-- Uses CSS-based orbital animation effects with twinkling stars background
+- `index.njk` — homepage: compact hero splash (photo, tagline, topic stats) + up to 3 latest posts under “Latest blurbs”; `bodyClass: home` enables full-width layout
+- `articles.njk` — all posts listing at `/articles/`
+- `bio.njk` — Bio page at `/bio/`
+- CSS-based orbital animation effects with twinkling stars background
 - Articles written in Markdown under `articles/`
 
 ## Project Structure
 ```
 .
-├── index.njk               # Homepage template (lists all articles)
+├── index.njk               # Homepage (splash + 3 latest posts; `bodyClass: home`)
+├── articles.njk            # All articles listing (/articles/)
+├── bio.njk                 # Bio page (/bio/)
 ├── eleventy.config.cjs     # Eleventy config: collections, filters, passthrough
 ├── package.json            # Eleventy SSG with open-cli and luxon
+├── DEPLOY.md               # GitHub Pages deployment guide
+├── .github/workflows/
+│   └── deploy.yml          # CI: build on push to main, deploy _site/ to Pages
 ├── articles/               # Article source files (.md)
-├── assets/
-│   └── images/             # Static image assets
+├── assets/                 # Static assets (passthrough copy of entire directory)
+│   └── images/             # Images (antoine.jpg, placeholder.svg, etc.)
 ├── _includes/
 │   └── _layouts/
-│       ├── base.njk        # Base HTML shell (stars, orbits, header, footer)
-│       └── article.njk    # Article page layout (title, date, content, tags)
-├── .eleventyignore          # Excludes AGENT.md and README.md from processing
+│       ├── base.njk        # Base HTML shell (stars, orbits, header, footer, all CSS)
+│       └── article.njk     # Article page layout (title, date, TOC, content, tags)
+├── .eleventyignore         # Excludes AGENT.md and README.md from processing
 ├── scripts/
-│    └── scaffold-article.js # Blog scaffolding CLI
-└── _site/                   # Build output (auto-generated, gitignored)
+│   └── scaffold-article.js # Blog scaffolding CLI (slugifies title → filename)
+└── _site/                  # Build output (auto-generated, gitignored)
 ```
 
 ## Tech Stack
 - **Build Tool**: Eleventy v3.1.5 (static site generator)
-- **Date Formatting**: luxon v3+ (via `date` filter in `eleventy.config.cjs`)
+- **Date Formatting**: luxon v3+ (via `date` and `readingTime` filters in `eleventy.config.cjs`)
+- **Article typography**: Source Serif 4 for prose; build-time TOC, read time, callout styling
 - **Dev Server**: `npm run dev` starts Eleventy live reload
 - **Build Command**: `npm run build` (or `npx @11ty/eleventy`)
 - **Additional**: open-cli for auto-open in browser
+- **CI**: GitHub Actions (`.github/workflows/deploy.yml`) — Node 24, `npm ci` + `npm run build`, deploys `_site/` to GitHub Pages on push to `main`
+
+### Eleventy filters (`eleventy.config.cjs`)
+- `date` — Luxon formatting (ISO strings or JS Date objects)
+- `readingTime` — word-count estimate from HTML content (~200 wpm, min 1 min)
+- `addHeadingIds` — injects `id` attributes on `<h2>`/`<h3>` for anchor links
+- `extractHeadings` — parses headed HTML into `{ level, id, text }[]` for TOC
+
+### Article collection
+- Glob: `articles/**/*.md`
+- Sort: newest `date` first; ties broken by `inputPath` localeCompare
 
 ## Key Features
 - Dark UI theme with slate/navy gradients
 - Fixed orbital rings background animation
 - Twinkling stars overlay effect
-- Styled article cards with hover effects
-- Responsive design with system font stack
+- **Layout widths**: homepage and articles listing use **1680px** max; bio and article pages use **1280px** page shell; article prose capped at **46rem** with sticky sidebar TOC at ≥1080px
+- **Post cards** (homepage + `/articles/`): moderately square tiles (`aspect-ratio: 5 / 4`) in a responsive `auto-fill` grid (`minmax(280px, 1fr)`); when homepage has ≤3 posts, `home-posts-layout--solo` caps the grid at **380px** wide. Each card shows date, first tag, title, 3-line clamped summary, and “Read more →” pinned to the bottom with a subtle divider; left **3px accent border** on hover
+- “More articles…” link on homepage when collection has >3 posts
+- Sticky full-width header: nav (Home, Bio) + GitHub and LinkedIn icon links
+- Article pages: build-time “On this page” TOC from h2/h3 headings, read-time badge, tag pills; footer “← Back home” link to `/` (`.article-footer`)
+- **Back navigation**: bio and articles listing use `.back-link-container` with “← Back home” → `/`; bio gets extra top spacing (`3rem` vs `2.5rem` default)
+- Responsive design with system font stack (sans-serif UI; Source Serif 4 for article prose)
+- **Site footer**: “vibe coded in 2026” in `base.njk` — `body` + `.page-content` flex column; `footer { margin-top: auto }` pins it to the viewport bottom on short pages, pushes below content on long pages
 
 ## Development Workflow
-1. **Create a new post:** Run `npm run new-article "Your Title"`
+1. **Create a new post:** Run `npm run new-article "Your Title"` — slugifies title for filename and permalink
 2. **Edit files in `articles/`:** Use the generated `.md` file as your starting point
 3. **Run preview:** `npm run dev` for live reload
 4. **Build for production:** `npm run build`
-5. **Deployment:** See [DEPLOY.md](./DEPLOY.md) for GitHub Pages and Custom Domain setup instructions.
+5. **Deployment:** See [DEPLOY.md](./DEPLOY.md) for GitHub Pages setup (CI workflow already in `.github/workflows/deploy.yml`)
 
 ## Post-Change Visual Inspection
 
@@ -61,7 +86,7 @@ Personal static blog built with **Eleventy (v3.1.5)** and hosted on GitHub Pages
 | 1 | Screenshot homepage | `chrome-devtools_take_screenshot` — verify layout, typography, cards, animations |
 | 2 | Navigate to latest article (click 1st card link) | `chrome-devtools_click` on 1st article link, then `chrome-devtools_take_screenshot` |
 | 3 | Navigate back to homepage | `chrome-devtools_navigate_page` type=`back` |
-| 4 | Navigate to 2nd latest article (click 2nd card link) | `chrome-devtools_click` on 2nd article link, then `chrome-devtools_take_screenshot` |
+| 4 | Navigate to Bio | `chrome-devtools_navigate_page` → `/bio/`, then `chrome-devtools_take_screenshot` |
 | 5 | Go back to homepage | `chrome-devtools_navigate_page` type=`back` |
 
 **Each screenshot should verify:**
@@ -82,44 +107,43 @@ Personal static blog built with **Eleventy (v3.1.5)** and hosted on GitHub Pages
 - **Required frontmatter for all articles:**
   ```yaml
   ---
+  layout: _layouts/article.njk
   title: Article Title
   date: YYYY-MM-DD
-  summary: Short 2-3 sentence summary for homepage
-  tags: [category]  # optional
+  summary: Short 2-3 sentence summary for homepage cards
+  tags: [category]  # optional; first tag shown on cards
+  permalink: /articles/slugified-title/
   ---
   ```
-- **Content field:** Main article body in `{% if content %}` or just paste below frontmatter (will be used if content field not provided)
+- **TOC**: `article.njk` pipes content through `addHeadingIds` then `extractHeadings` — only `<h2>` and `<h3>` appear in the sidebar TOC
+- **Content field:** Main article body below frontmatter (or via `{% if content %}` in templates)
 - **Asset paths (Images)**: Use root-relative URLs (e.g. `![alt](/assets/images/file.jpg)`) — NOT relative paths like `../assets/...`, since Markdown resolves paths against the output URL, not the source file location.
-- Static assets in `assets/` directory (images, fonts)
+- Static assets in `assets/` directory (entire tree copied via passthrough)
 - Article templates reference: `{{ title }}`, `{{ date }}`, `{{ summary }}`, `{{ content }}`, `{{ tags }}`
 
 ## Important Files
-- `index.njk` - Homepage template listing all articles
-- `eleventy.config.cjs` - Eleventy config: article collection, date filter, asset passthrough
-- `_includes/_layouts/base.njk` - Base HTML shell shared by all pages
-- `_includes/_layouts/article.njk` - Article page layout
-- `package.json` - Dependencies and scripts
+- `index.njk` — Homepage splash + up to 3 latest articles; adds `home-posts-layout--solo` when ≤3 posts; “More articles…” when >3
+- `articles.njk` — Full article listing (same `.post-card-*` markup/grid as homepage; “← Back home” via `.back-link-container`; not in `article` collection)
+- `bio.njk` — Bio page (`.bio-page` + `.article-content` prose; “← Back home” with extra spacing; not in `article` collection)
+- `eleventy.config.cjs` — Article collection, date/readingTime/addHeadingIds/extractHeadings filters, `assets/` passthrough
+- `_includes/_layouts/base.njk` — Base HTML shell, all inline CSS, header/footer
+- `_includes/_layouts/article.njk` — Article layout with build-time TOC and `.article-footer` “← Back home” link
+- `scripts/scaffold-article.js` — Slugifies title, writes frontmatter + starter sections
+- `package.json` — Dependencies and scripts
+- `.github/workflows/deploy.yml` — Production CI/CD (Node 24)
 
 ## Guidelines for Changes
 1. **Scaffold first**: Always use `npm run new-article "Title"` instead of manually creating `.md` files to ensure consistent formatting and frontmatter.
 2. **Live Preview**: Run `npm run dev` before testing changes to see results immediately
-3. **Frontmatter required**: All articles must include `---` YAML frontmatter:
-    ```yaml
-    ---
-   layout: _layouts/article.njk
-   title: Article Title
-   date: YYYY-MM-DD
-   summary: Short 2-3 sentence summary for homepage
-   tags: [category]    # optional
-   permalink: /articles/slugified-title/
-    ---
-    ```
-3. **Date filter**: Uses Luxon format tokens (e.g. `'LLLL dd, yyyy'`) — NOT strftime
-4. **Nunjucks syntax**: Use `{{ value if condition else default }}` — NOT JS ternary `? :`
-5. **Asset paths (Images)**: Use root-relative URLs (e.g. `![alt](/assets/images/file.jpg)`) — NOT relative paths like `../assets/...`, since Markdown resolves paths against the output URL, not the source file location.
-6. **Preserve styling**: Keep inline styles in `base.njk` unless modifying
-7. **Test build**: Run `npm run build` locally before committing
-8. **Clean stale build output**: Eleventy v3 has no `--clean` flag; delete `_site/` manually then rebuild
+3. **Frontmatter required**: All articles must include `---` YAML frontmatter (see Template Conventions above)
+4. **Date filter**: Uses Luxon format tokens (e.g. `'LLLL dd, yyyy'`, `'dd·LLL·yy'`) — NOT strftime
+5. **Nunjucks syntax**: Use `{{ value if condition else default }}` — NOT JS ternary `? :`
+6. **Asset paths (Images)**: Use root-relative URLs (e.g. `![alt](/assets/images/file.jpg)`) — NOT relative paths like `../assets/...`, since Markdown resolves paths against the output URL, not the source file location.
+7. **Preserve styling**: Keep inline styles in `base.njk` unless modifying; post card styles under `.posts-grid` / `.post-card-*`; back-link spacing under `.back-link-container` / `.article-footer`; site footer sticky layout via `.page-content` flex + `footer { margin-top: auto }`
+8. **Post card changes**: Tiles use `aspect-ratio: 5 / 4` (not full 1:1) — keep excerpt clamped and “Read more” at bottom via `margin-top: auto`; use `home-posts-layout--solo` for single/few-post homepage layout
+9. **Homepage body class**: `index.njk` sets `bodyClass: home` (renders as `class="home"`); CSS targets `body.is-home` for full-width layout — these must match for homepage styles to apply
+10. **Test build**: Run `npm run build` locally before committing
+11. **Clean stale build output**: Eleventy v3 has no `--clean` flag; delete `_site/` manually then rebuild
 
 ---
 

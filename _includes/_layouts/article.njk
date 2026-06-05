@@ -2,21 +2,48 @@
 layout: _layouts/base.njk
 ---
 
-<article>
-    <h2 class="article-title">{{ title }}</h2>
-    <div class="article-date">{{ date | date('LLLL dd, yyyy') }}</div>
+{% set articleContent = content | addHeadingIds %}
+{% set headings = articleContent | extractHeadings %}
 
-    <div class="article-content">
-        {{ content | safe }}
-    </div>
+<article class="article-page">
+    <header class="article-header">
+        <h1 class="article-title">{{ title }}</h1>
+        <div class="article-meta">
+            <time class="article-date" datetime="{{ date | date('yyyy-MM-dd') }}">{{ date | date('LLLL dd, yyyy') }}</time>
+            <span class="article-meta-sep" aria-hidden="true">·</span>
+            <span class="article-read-time">{{ content | readingTime }} min read</span>
+            {% if tags and tags.length > 0 %}
+                <div class="article-tags">
+                    {% for tag in tags %}
+                        <span class="tag">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </header>
 
-    <div class="article-tags">
-        {% for tag in tags %}
-            <span class="tag">{{ tag }}</span>
-        {% endfor %}
-    </div>
+    <div class="article-layout">
+        {% if headings.length > 0 %}
+            <nav class="article-toc" aria-label="On this page">
+                <p class="article-toc-label">On this page</p>
+                <ol class="article-toc-list">
+                    {% for heading in headings %}
+                        <li{% if heading.level == 3 %} class="article-toc-h3"{% endif %}>
+                            <a href="#{{ heading.id }}">{{ heading.text }}</a>
+                        </li>
+                    {% endfor %}
+                </ol>
+            </nav>
+        {% endif %}
 
-    <div class="back-link-container">
-        <a href="{{ '/' | url }}" class="back-link">&larr; Back to articles</a>
+        <div class="article-body">
+            <div class="article-content">
+                {{ articleContent | safe }}
+            </div>
+
+            <footer class="article-footer">
+                <a href="{{ '/' | url }}" class="back-link">&larr; Back home</a>
+            </footer>
+        </div>
     </div>
 </article>
