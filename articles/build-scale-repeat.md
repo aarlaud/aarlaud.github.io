@@ -49,7 +49,7 @@ You get to identify these traits in people you work with. You can feel who you c
 ### The AI era
 
 AI is changing everything, to level much deeper than most people can fathom. Much deeper than I can fathom myself. Models are becoming commodity, sure. The shift is the way to use them. Extracting as efficiently as possible every ounce of capacity from them, using expended energy as efficiently as possible.
-The Frontier labs and the surrounding industries are leaning hard into the infrastructure play. Like really hard, hard like we've never seen. The capital thrown into it is just insane. But the technologies involves are just incredible. It's really the closest thing to magic. And when you see how ASML is doing the ultra violet lithography, you start seeing the fabric of reality bend, or maybe it's just my mind.
+The Frontier labs and the surrounding industries are leaning hard into the infrastructure play. Like really hard, hard like we've never seen. The capital thrown into it is just insane. But the technologies involved are just incredible. It's really the closest thing to magic. And when you see how ASML is doing the ultra violet lithography, you start seeing the fabric of reality bend, or maybe it's just my mind.
 AI is infused everywhere, and jumping into a pure AI company is my way to drink from the firehose, without restraint..
 
 ### The Risk
