@@ -20,13 +20,16 @@ Personal static blog built with **Eleventy (v3.1.5)** and hosted on GitHub Pages
 ├── .github/workflows/
 │   └── deploy.yml          # CI: build on push to main, deploy _site/ to Pages
 ├── articles/               # Article source files (.md)
-├── assets/                 # Static assets (passthrough copy of entire directory)
-│   └── images/             # Images (antoine.jpg, placeholder.svg, etc.)
+├── _data/
+│   └── talks.json          # Talks listed in the header “Talks” dropdown
+├── assets/                 # Static assets (passthrough copy; ignored as templates)
+│   ├── images/             # Images (antoine.jpg, placeholder.svg, etc.)
+│   └── talks/              # Self-contained HTML slide decks, served as-is
 ├── _includes/
 │   └── _layouts/
 │       ├── base.njk        # Base HTML shell (stars, orbits, header, footer, all CSS)
 │       └── article.njk     # Article page layout (title, date, TOC, content, tags)
-├── .eleventyignore         # Excludes AGENT.md and README.md from processing
+├── .eleventyignore         # Excludes AGENT.md, README.md, DEPLOY.md and assets/ from template processing
 ├── scripts/
 │   └── scaffold-article.js # Blog scaffolding CLI (slugifies title → filename)
 └── _site/                  # Build output (auto-generated, gitignored)
@@ -58,7 +61,8 @@ Personal static blog built with **Eleventy (v3.1.5)** and hosted on GitHub Pages
 - **Layout widths**: homepage and articles listing use **1680px** max; bio and article pages use **1280px** page shell; article prose capped at **46rem** with sticky sidebar TOC at ≥1080px
 - **Post cards** (homepage + `/articles/`): moderately square tiles (`aspect-ratio: 5 / 4`) in a responsive `auto-fill` grid (`minmax(280px, 1fr)`); when homepage has ≤3 posts, `home-posts-layout--solo` caps the grid at **380px** wide. Each card shows date, first tag, title, 3-line clamped summary, and “Read more →” pinned to the bottom with a subtle divider; left **3px accent border** on hover
 - “More articles…” link on homepage when collection has >3 posts
-- Sticky full-width header: nav (Home, Bio) + GitHub and LinkedIn icon links
+- Sticky full-width header: nav (Home, Bio, Talks dropdown) + GitHub and LinkedIn icon links
+- **Talks dropdown**: `.nav-dropdown` in `base.njk`, CSS-only (opens on `:hover` / `:focus-within`, no JS); entries rendered from `_data/talks.json` (`event`, `title`, `url`), open in a new tab. At ≤640px the nav wraps onto its own row under the brand and the menu spans the nav width
 - Article pages: build-time “On this page” TOC from h2/h3 headings, read-time badge, tag pills; footer “← Back home” link to `/` (`.article-footer`)
 - **Back navigation**: bio and articles listing use `.back-link-container` with “← Back home” → `/`; bio gets extra top spacing (`3rem` vs `2.5rem` default)
 - Responsive design with system font stack (sans-serif UI; Source Serif 4 for article prose)
@@ -69,7 +73,8 @@ Personal static blog built with **Eleventy (v3.1.5)** and hosted on GitHub Pages
 2. **Edit files in `articles/`:** Use the generated `.md` file as your starting point
 3. **Run preview:** `npm run dev` for live reload
 4. **Build for production:** `npm run build`
-5. **Deployment:** See [DEPLOY.md](./DEPLOY.md) for GitHub Pages setup (CI workflow already in `.github/workflows/deploy.yml`)
+5. **Add a talk:** drop the deck into `assets/talks/<slug>.html` and add `{ "event", "title", "url": "/assets/talks/<slug>.html" }` to `_data/talks.json`
+6. **Deployment:** See [DEPLOY.md](./DEPLOY.md) for GitHub Pages setup (CI workflow already in `.github/workflows/deploy.yml`)
 
 ## Post-Change Visual Inspection
 
@@ -144,6 +149,7 @@ Personal static blog built with **Eleventy (v3.1.5)** and hosted on GitHub Pages
 9. **Homepage body class**: `index.njk` sets `bodyClass: home` (renders as `class="home"`); CSS targets `body.is-home` for full-width layout — these must match for homepage styles to apply
 10. **Test build**: Run `npm run build` locally before committing
 11. **Clean stale build output**: Eleventy v3 has no `--clean` flag; delete `_site/` manually then rebuild
+12. **Keep `assets/` in `.eleventyignore`**: otherwise `.html` files under `assets/` (e.g. talk decks) get rendered as templates in addition to being copied
 
 ---
 
